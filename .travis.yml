@@ -9,6 +9,7 @@ before_install:
 script:
   - docker run martingrzzler/react-test npm test -- --coverage
 
+  
 after_success:
   - docker build -t martingrzzler/multi-client ./client
   - docker build -t martingrzzler/multi-nginx ./nginx
