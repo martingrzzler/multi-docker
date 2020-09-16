@@ -1,0 +1,23 @@
+sudo: required
+
+services:
+  - docker
+
+before_install: 
+  - docker build -t martingrzzler/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run martingrzzler/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t martingrzzler/multi-client ./client
+  - docker build -t martingrzzler/multi-nginx ./nginx
+  - docker build -t martingrzzler/multi-server ./server
+  - docker build -t martingrzzler/multi-worker ./worker
+# login
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+# push images to docker hub
+  - docker push martingrzzler/multi-client
+  - docker push martingrzzler/multi-nginx
+  - docker push martingrzzler/multi-server
+  - docker push martingrzzler/multi-worker
